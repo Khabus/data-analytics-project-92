@@ -34,3 +34,21 @@ from Average_income
 group by 1,2
 having average_income <= (select AVG(average_income) from Average_income)
 order by 2 asc;
+
+--Третий отчет( отчет с данными по выручке по каждому продавцу и дню недели)
+with tab as(
+select
+    CONCAT(e.first_name, ' ', e.last_name) as name,
+    TO_CHAR(s.sale_date, 'day') as weekday,
+    EXTRACT(ISODOW from s.sale_date) as dayoftheweek,
+    SUM(s.quantity * p.price) as income
+from employees e
+left join sales s
+on s.sales_person_id = e.employee_id
+left join products p
+on s.product_id = p.product_id
+group by 1, 2, 3
+order by 3
+)
+select name, weekday, income
+from tab;
