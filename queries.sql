@@ -6,7 +6,7 @@ from customers;
 select
     concat(e.first_name, ' ', e.last_name) as name,
     COUNT(s.sales_id) as opeartions,
-    SUM(s.quantity * p.price) as income
+    ROUND(SUM(s.quantity * p.price), 0) as income
 from employees e 
 left join sales s 
     ON e.employee_id = s.sales_person_id 
