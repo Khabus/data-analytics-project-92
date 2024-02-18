@@ -41,7 +41,7 @@ select
     CONCAT(e.first_name, ' ', e.last_name) as name,
     TO_CHAR(s.sale_date, 'day') as weekday,
     EXTRACT(ISODOW from s.sale_date) as dayoftheweek,
-    SUM(s.quantity * p.price) as income
+    ROUND(SUM(s.quantity * p.price), 0) as income
 from employees e
 left join sales s
 on s.sales_person_id = e.employee_id
@@ -51,4 +51,4 @@ group by 1, 2, 3
 order by 3
 )
 select name, weekday, income
-from tab;
+from tab
