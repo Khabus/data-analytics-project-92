@@ -71,3 +71,21 @@ select age_category, COUNT(age)
 from tab
 group by 1
 order by 1;
+
+Второй отчет (количество уникальных покупателей и выручка)
+with tab as(
+select
+    s.customer_id,
+    to_char(sale_date, 'YYYY-MM') as date,
+    s.quantity * p.price as income
+from sales s 
+left join products p 
+on s.product_id = p.product_id
+)
+select
+    date,
+    COUNT (distinct customer_id),
+    ROUND(SUM(income), 0) as income
+from tab 
+group by 1
+order by 1 ASC;
