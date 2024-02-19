@@ -1,8 +1,10 @@
---Считаем количество покупателей:
+Считаем количество покупателей:
 SELECT
     COUNT(customer_id) AS customers_count
 from customers;
---Первый отчет(ищем продавцов с наибольшей выручкой)
+
+АНАЛИЗ ОТДЕЛА ПРОДАЖ
+Первый отчет (ищем продавцов с наибольшей выручкой)
 select
     concat(e.first_name, ' ', e.last_name) as name,
     COUNT(s.sales_id) as opeartions,
@@ -15,7 +17,8 @@ join products p
 group by 1
 order by 3 desc
 limit 10;
--- Второй отчет (отчет с продавцами, чья выручка ниже средней выручки всех продавцов)
+
+Второй отчет (отчет с продавцами, чья выручка ниже средней выручки всех продавцов)
 with Average_income AS(
     SELECT
     concat(e.first_name, ' ', e.last_name) as name,
@@ -35,7 +38,7 @@ group by 1,2
 having average_income <= (select AVG(average_income) from Average_income)
 order by 2 asc;
 
---Третий отчет( отчет с данными по выручке по каждому продавцу и дню недели)
+Третий отчет( отчет с данными по выручке по каждому продавцу и дню недели)
 with tab as(
 select
     CONCAT(e.first_name, ' ', e.last_name) as name,
@@ -52,3 +55,19 @@ order by 3
 )
 select name, weekday, income
 from tab
+
+АНАЛИЗ ПОКУПАТЕЛЕЙ
+Первый отчет (количество покупателей в разных возрастных группах)
+with tab as(
+select *,
+case
+	when age between 16 and 25 then '16-25'
+	when age between 26 and 40 then '26-40'
+	when age > 40 then '40+'
+end as age_category
+from customers
+)
+select age_category, COUNT(age)
+from tab
+group by 1
+order by 1;
