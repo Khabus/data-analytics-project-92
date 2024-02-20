@@ -89,3 +89,27 @@ select
 from tab 
 group by 1
 order by 1 ASC;
+
+Третий отчет (покупатели, первая покупка которых пришлась на время проведения специальных акций)
+with tab as(
+select distinct
+    c.customer_id,
+    CONCAT(c.first_name, ' ', c.last_name) as customer,
+    s.sale_date as sale_date,
+    CONCAT(e.first_name, ' ', e.last_name) as seller,
+    first_value (p.price*s.quantity) over (partition by c.customer_id order by s.sale_date) as fst_prch,
+    row_number () over (partition by c.customer_id order by s.sale_date) as r_n
+from sales s 
+left join customers c 
+on s.customer_id = c.customer_id 
+left join employees e 
+on s.sales_person_id = e.employee_id 
+left join products p 
+on s.product_id = p.product_id 
+order by 1
+)
+select customer,
+    sale_date,
+    seller
+from tab
+where fst_prch = 0 and r_n = 1;
